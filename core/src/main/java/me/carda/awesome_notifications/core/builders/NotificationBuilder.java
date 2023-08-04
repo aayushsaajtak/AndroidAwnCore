@@ -754,12 +754,12 @@ public class NotificationBuilder {
     }
 
     private void setBody(NotificationModel notificationModel, NotificationCompat.Builder builder) {
-        if(notificationModel.content.notificationLayout == NotificationLayout.Custom) return;
+//        if(notificationModel.content.notificationLayout == NotificationLayout.Custom) return;
         builder.setContentText(HtmlUtils.fromHtml(notificationModel.content.body));
     }
 
     private void setTitle(NotificationModel notificationModel, NotificationChannelModel channelModel, NotificationCompat.Builder builder) {
-        if(notificationModel.content.notificationLayout == NotificationLayout.Custom) return;
+//        if(notificationModel.content.notificationLayout == NotificationLayout.Custom) return;
         if (notificationModel.content.title != null) {
             builder.setContentTitle(HtmlUtils.fromHtml(notificationModel.content.title));
         }
@@ -1339,7 +1339,8 @@ public class NotificationBuilder {
             RemoteViews contentView = new RemoteViews(AwesomeNotifications.getPackageName(context), R.layout.custom_notification_layout);
             contentView.setImageViewResource(R.id.image, R.mipmap.ic_launcher);
             contentView.setTextViewText(R.id.title, notificationModel.content.title);
-            builder.setContent(contentView);
+            builder.setCustomContentView(contentView);
+//            builder.setContent(contentView);
 
     }
 
