@@ -25,7 +25,7 @@ public class NotificationLocalizationModel extends AbstractModel {
         summary      = getValueOrDefault(arguments, Definitions.NOTIFICATION_SUMMARY, String.class, null);
         largeIcon    = getValueOrDefault(arguments, Definitions.NOTIFICATION_LARGE_ICON, String.class, null);
         bigPicture   = getValueOrDefault(arguments, Definitions.NOTIFICATION_BIG_PICTURE, String.class, null);
-        buttonLabels = getValueOrDefaultMap(arguments, Definitions.NOTIFICATION_BUTTON_LABELS, null);
+//        buttonLabels = getValueOrDefaultMap(arguments, Definitions.NOTIFICATION_BUTTON_LABELS, null);
 
         return this;
     }
@@ -39,7 +39,7 @@ public class NotificationLocalizationModel extends AbstractModel {
         putDataOnSerializedMap(Definitions.NOTIFICATION_SUMMARY, dataMap, summary);
         putDataOnSerializedMap(Definitions.NOTIFICATION_LARGE_ICON, dataMap, largeIcon);
         putDataOnSerializedMap(Definitions.NOTIFICATION_BIG_PICTURE, dataMap, bigPicture);
-        putDataOnSerializedMap(Definitions.NOTIFICATION_BUTTON_LABELS, dataMap, buttonLabels);
+//        putDataOnSerializedMap(Definitions.NOTIFICATION_BUTTON_LABELS, dataMap, buttonLabels);
 
         return dataMap;
     }
