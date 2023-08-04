@@ -1337,7 +1337,7 @@ public class NotificationBuilder {
 
     private void setCustomLayout(Context context, NotificationModel notificationModel, NotificationCompat.Builder builder) {
             RemoteViews contentView = new RemoteViews(AwesomeNotifications.getPackageName(context), R.layout.custom_notification_layout);
-            contentView.setImageViewResource(R.id.image, R.mipmap.ic_launcher);
+            contentView.setImageViewResource(R.id.image, R.drawable.ic_stat_name);
             contentView.setTextViewText(R.id.title, notificationModel.content.title);
             builder.setCustomContentView(contentView);
 //            builder.setContent(contentView);
