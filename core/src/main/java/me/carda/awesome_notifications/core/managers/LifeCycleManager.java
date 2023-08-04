@@ -18,7 +18,7 @@ public class LifeCycleManager implements LifecycleObserver {
 
     private static final String TAG = "LifeCycleManager";
 
-    protected static NotificationLifeCycle appLifeCycle = NotificationLifeCycle.Terminated;
+    protected static NotificationLifeCycle appLifeCycle = NotificationLifeCycle.AppKilled;
     public static NotificationLifeCycle getApplicationLifeCycle(){
         return appLifeCycle;
     }
@@ -99,7 +99,7 @@ public class LifeCycleManager implements LifecycleObserver {
         updateAppLifeCycle(
                 hasGoneForeground ?
                         NotificationLifeCycle.Background :
-                        NotificationLifeCycle.Terminated);
+                        NotificationLifeCycle.AppKilled);
     }
 
     boolean wasNotCreated = true;
@@ -108,7 +108,7 @@ public class LifeCycleManager implements LifecycleObserver {
         updateAppLifeCycle(
                 hasGoneForeground ?
                         NotificationLifeCycle.Background :
-                        NotificationLifeCycle.Terminated);
+                        NotificationLifeCycle.AppKilled);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -132,7 +132,7 @@ public class LifeCycleManager implements LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onDestroyed() {
         updateAppLifeCycle(
-                NotificationLifeCycle.Terminated);
+                NotificationLifeCycle.AppKilled);
     }
 
 }

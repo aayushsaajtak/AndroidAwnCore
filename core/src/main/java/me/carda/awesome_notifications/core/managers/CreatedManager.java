@@ -2,9 +2,6 @@ package me.carda.awesome_notifications.core.managers;
 
 import android.content.Context;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-
-import java.util.Calendar;
 import java.util.List;
 
 import me.carda.awesome_notifications.core.Definitions;
@@ -12,90 +9,47 @@ import me.carda.awesome_notifications.core.exceptions.AwesomeNotificationsExcept
 import me.carda.awesome_notifications.core.models.returnedData.NotificationReceived;
 import me.carda.awesome_notifications.core.utils.StringUtils;
 
-public class CreatedManager extends EventManager {
+public class CreatedManager {
 
-    private static final RepositoryManager<NotificationReceived> shared
-            = new RepositoryManager<>(
+    private static final SharedManager<NotificationReceived> shared
+            = new SharedManager<>(
                     StringUtils.getInstance(),
                     "CreatedManager",
                     NotificationReceived.class,
                     "NotificationReceived");
 
-    // ************** SINGLETON PATTERN ***********************
-
-    private static CreatedManager instance;
-
-    private CreatedManager(){}
-    public static CreatedManager getInstance() {
-        if (instance == null)
-            instance = new CreatedManager();
-        return instance;
+    public static Boolean removeCreated(Context context, Integer id) throws AwesomeNotificationsException {
+        return shared.remove(context, Definitions.SHARED_CREATED, id.toString());
     }
 
-    // ************** SINGLETON PATTERN ***********************
-
-
-    public boolean saveCreated(
-            @NonNull Context context,
-            @NonNull NotificationReceived received
-    ) throws AwesomeNotificationsException {
-        return shared.set(
-                context,
-                Definitions.SHARED_CREATED,
-                _getKeyByIdAndDate(received.id, received.createdDate),
-                received);
-    }
-
-    @NonNull
-    public List<NotificationReceived> listCreated(
-            @NonNull Context context
-    ) throws AwesomeNotificationsException {
+    public static List<NotificationReceived> listCreated(Context context) throws AwesomeNotificationsException {
         return shared.getAllObjects(context, Definitions.SHARED_CREATED);
     }
 
-    public List<NotificationReceived> getCreatedByKey(
-            @NonNull Context context,
-            @NonNull Integer id
-    ) throws AwesomeNotificationsException {
-        return shared.getAllObjectsStartingWith(
-                context,
-                Definitions.SHARED_CREATED,
-                _getKeyById(id));
+    public static void saveCreated(Context context, NotificationReceived received) throws AwesomeNotificationsException {
+        shared.set(context, Definitions.SHARED_CREATED, received.id.toString(), received);
     }
 
-    public NotificationReceived getCreatedByIdAndDate(
-            @NonNull Context context,
-            @NonNull Integer id,
-            @NonNull Calendar createdDate
-    ) throws AwesomeNotificationsException {
-        return shared.get(
-                context,
-                Definitions.SHARED_CREATED,
-                _getKeyByIdAndDate(id, createdDate));
+    public static NotificationReceived getCreatedByKey(Context context, Integer id) throws AwesomeNotificationsException {
+        return shared.get(context, Definitions.SHARED_CREATED, id.toString());
     }
 
-    public boolean removeCreated(
-            @NonNull Context context,
-            @NonNull Integer id,
-            @NonNull Calendar createdDate
-    ) throws AwesomeNotificationsException {
-        return shared.remove(
-                context,
-                Definitions.SHARED_CREATED,
-                _getKeyByIdAndDate(id, createdDate));
+    public static void cancelAllCreated(Context context) throws AwesomeNotificationsException {
+        List<NotificationReceived> receivedList = shared.getAllObjects(context, Definitions.SHARED_CREATED);
+        if (receivedList != null){
+            for (NotificationReceived received : receivedList) {
+                cancelCreated(context, received.id);
+            }
+        }
     }
 
-    public boolean removeAllCreated(
-            @NonNull Context context
-    ) throws AwesomeNotificationsException {
-        return shared.removeAll(
-                context,
-                Definitions.SHARED_CREATED);
+    public static void cancelCreated(Context context, Integer id) throws AwesomeNotificationsException {
+        NotificationReceived received = getCreatedByKey(context, id);
+        if(received !=null)
+            removeCreated(context, received.id);
     }
 
-    public boolean commitChanges(
-            @NonNull Context context
-    ) throws AwesomeNotificationsException {
-        return shared.commit(context);
+    public static void commitChanges(Context context) throws AwesomeNotificationsException {
+        shared.commit(context);
     }
 }

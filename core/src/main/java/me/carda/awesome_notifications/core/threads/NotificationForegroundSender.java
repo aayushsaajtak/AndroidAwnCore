@@ -145,17 +145,14 @@ public class NotificationForegroundSender extends NotificationThread<Notificatio
             receivedNotification.displayedLifeCycle = receivedNotification.displayedLifeCycle == null ?
                     appLifeCycle : receivedNotification.displayedLifeCycle;
 
-            BroadcastSender
-                    .getInstance()
-                    .sendBroadcastNotificationCreated(
-                            wContextReference.get(),
-                            receivedNotification);
+            BroadcastSender.sendBroadcastNotificationCreated(
+                    wContextReference.get(),
+                    receivedNotification);
 
-            BroadcastSender
-                    .getInstance()
-                    .sendBroadcastNotificationDisplayed(
-                            wContextReference.get(),
-                            receivedNotification);
+
+            BroadcastSender.sendBroadcastNotificationDisplayed(
+                    wContextReference.get(),
+                    receivedNotification);
         }
 
         if(this.endTime == 0L)
@@ -187,7 +184,7 @@ public class NotificationForegroundSender extends NotificationThread<Notificatio
             NotificationLifeCycle lifeCycle = AwesomeNotifications.getApplicationLifeCycle();
 
             if(
-                (lifeCycle == NotificationLifeCycle.Terminated) ||
+                (lifeCycle == NotificationLifeCycle.AppKilled) ||
                 (lifeCycle == NotificationLifeCycle.Foreground && notificationModel.content.displayOnForeground) ||
                 (lifeCycle == NotificationLifeCycle.Background && notificationModel.content.displayOnBackground)
             ){

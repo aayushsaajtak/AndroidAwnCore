@@ -55,7 +55,6 @@ public abstract class DismissedNotificationReceiver extends AwesomeBroadcastRece
                 .unregisterActiveNotification(context, actionReceived.id);
 
             BroadcastSender
-                .getInstance()
                 .sendBroadcastNotificationDismissed(context, actionReceived);
         }
     }

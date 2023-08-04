@@ -2,8 +2,6 @@ package me.carda.awesome_notifications.core.models;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
-
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +13,6 @@ import me.carda.awesome_notifications.core.exceptions.AwesomeNotificationsExcept
 import me.carda.awesome_notifications.core.exceptions.ExceptionCode;
 import me.carda.awesome_notifications.core.exceptions.ExceptionFactory;
 import me.carda.awesome_notifications.core.externalLibs.CronExpression;
-import me.carda.awesome_notifications.core.logs.Logger;
 import me.carda.awesome_notifications.core.utils.CalendarUtils;
 import me.carda.awesome_notifications.core.utils.CronUtils;
 import me.carda.awesome_notifications.core.utils.ListUtils;
@@ -37,7 +34,7 @@ public class NotificationCrontabModel extends NotificationScheduleModel {
         initialDateTime    = getValueOrDefault(arguments, Definitions.NOTIFICATION_INITIAL_DATE_TIME, Calendar.class, null);
         expirationDateTime = getValueOrDefault(arguments, Definitions.NOTIFICATION_EXPIRATION_DATE_TIME, Calendar.class, null);
         crontabExpression  = getValueOrDefault(arguments, Definitions.NOTIFICATION_CRONTAB_EXPRESSION, String.class, null);
-        preciseSchedules   = getValueOrDefaultCalendarList(arguments, Definitions.NOTIFICATION_PRECISE_SCHEDULES, null);
+        preciseSchedules   = getValueOrDefault(arguments, Definitions.NOTIFICATION_PRECISE_SCHEDULES, List.class, null);
 
         return this;
     }
@@ -134,7 +131,22 @@ public class NotificationCrontabModel extends NotificationScheduleModel {
             Calendar preciseCalendar = null, crontabCalendar = null;
 
             if (!ListUtils.isNullOrEmpty(preciseSchedules)){
-                preciseCalendar = getNextMinimalPreciseSchedule(fixedNowDate);
+                for (Calendar preciseSchedule : preciseSchedules) {
+                    if(
+                        initialDateTime != null &&
+                        preciseSchedule.before(preciseSchedule)
+                    )
+                        continue;
+
+                    if(preciseSchedule.before(fixedNowDate))
+                        continue;
+
+                    if(
+                        preciseCalendar == null ||
+                        preciseCalendar.after(preciseSchedule)
+                    )
+                        preciseCalendar = preciseSchedule;
+                }
             }
 
             if(!stringUtils.isNullOrEmpty(crontabExpression))
@@ -167,32 +179,5 @@ public class NotificationCrontabModel extends NotificationScheduleModel {
                             "Schedule time is invalid",
                             ExceptionCode.DETAILED_INVALID_ARGUMENTS+".notificationCrontab");
         }
-    }
-
-    private Calendar getNextMinimalPreciseSchedule(@NonNull Calendar fixedNowDate) {
-        Calendar
-                preciseCalendar = null,
-                fixedNowDatePlusSecond = (Calendar) fixedNowDate.clone();
-
-        fixedNowDatePlusSecond.add(Calendar.SECOND, 1);
-        fixedNowDatePlusSecond.set(Calendar.MILLISECOND, 0);
-
-        for (Calendar currentSchedule : preciseSchedules) {
-            if(
-                initialDateTime != null &&
-                currentSchedule.before(initialDateTime)
-            )
-                continue;
-
-            if(currentSchedule.before(fixedNowDatePlusSecond))
-                continue;
-
-            if(
-                preciseCalendar == null ||
-                currentSchedule.before(preciseCalendar)
-            )
-                preciseCalendar = currentSchedule;
-        }
-        return preciseCalendar;
     }
 }

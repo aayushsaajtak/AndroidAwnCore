@@ -72,14 +72,10 @@ public abstract class AwesomeBackgroundService extends JobIntentService {
     }
 
     public static Long getDartCallbackDispatcher(Context context) throws AwesomeNotificationsException {
-        return DefaultsManager
-                .getInstance(context)
-                .getDartCallbackDispatcher(context);
+        return DefaultsManager.getDartCallbackDispatcher(context);
     }
 
     public static Long getSilentCallbackDispatcher(Context context) throws AwesomeNotificationsException {
-        return DefaultsManager
-                .getInstance(context)
-                .getSilentCallbackDispatcher(context);
+        return DefaultsManager.getSilentCallbackDispatcher(context);
     }
 }

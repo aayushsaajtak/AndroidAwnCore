@@ -16,8 +16,8 @@ import me.carda.awesome_notifications.core.utils.StringUtils;
 
 public class ChannelGroupManager {
 
-    private static final RepositoryManager<NotificationChannelGroupModel> shared
-            = new RepositoryManager<>(
+    private static final SharedManager<NotificationChannelGroupModel> shared
+            = new SharedManager<>(
                     StringUtils.getInstance(),
                     "ChannelGroupManager",
                     NotificationChannelGroupModel.class,

@@ -13,6 +13,7 @@ import me.carda.awesome_notifications.core.exceptions.ExceptionFactory;
 import me.carda.awesome_notifications.core.logs.Logger;
 
 public class NotificationButtonModel extends AbstractModel {
+
     private static final String TAG = "NotificationButtonModel";
 
     public String key;

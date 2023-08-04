@@ -6,18 +6,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.primitives.Longs;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -49,7 +43,6 @@ public abstract class AbstractModel implements Cloneable {
     protected final StringUtils stringUtils;
 
     public static Map<String, Object> defaultValues = new HashMap<>();
-    private Gson gson = new Gson();
 
     protected AbstractModel(){
         this.serializableUtils = SerializableUtils.getInstance();
@@ -157,22 +150,12 @@ public abstract class AbstractModel implements Cloneable {
 
         List<Object> response = new ArrayList<>();
         for (Object object : value){
-            if (object instanceof AbstractModel) {
+            if (object instanceof AbstractModel)
                 response.add(((AbstractModel) object).toMap());
-                continue;
-            }
-            if (object instanceof SafeEnum) {
+            if (object instanceof SafeEnum)
                 response.add(((SafeEnum) object).getSafeName());
-                continue;
-            }
-            if (object instanceof Calendar) {
-                response.add(SerializableUtils.getInstance().serializeCalendar((Calendar) object));
-                continue;
-            }
-            if (object instanceof Serializable){
+            if (object instanceof Serializable)
                 response.add(object);
-                continue;
-            }
         }
         mapData.put(
                 reference,
@@ -627,64 +610,35 @@ public abstract class AbstractModel implements Cloneable {
         return defaultValue;
     }
 
-    public List<Calendar> getValueOrDefaultCalendarList(
+    public List getValueOrDefault(
             @NonNull Map<String, Object> map,
             @NonNull String reference,
-            @Nullable List<Calendar> defaultValue
+            @NonNull Class<List> type,
+            @Nullable List defaultValue
     ){
         Object value = map.get(reference);
         if(value == null) return defaultValue;
 
-        if (!List.class.isAssignableFrom(value.getClass())) {
-            return defaultValue;
-        }
+        if(value instanceof List)
+            return (List)value;
 
-        List<String> dateStrings = (List) value;
-        List<Calendar> calendars = new ArrayList<>();
-
-        for (String dateString : dateStrings) {
-            Calendar calendar = serializableUtils.deserializeCalendar(dateString);
-            calendars.add(calendar);
-        }
-        return calendars;
+        return defaultValue;
     }
 
-    public <T> List<T> getValueOrDefaultList(
+    @SuppressWarnings("unchecked")
+    public Map getValueOrDefault(
             @NonNull Map<String, Object> map,
             @NonNull String reference,
-            @Nullable List<T> defaultValue
-    ) {
+            @NonNull Class<Map> type,
+            @Nullable Map defaultValue
+    ){
         Object value = map.get(reference);
-        if (value == null) {
-            return defaultValue;
-        }
+        if(value == null) return defaultValue;
 
-        Type listType = new TypeToken<List<T>>(){}.getType();
-        try {
-            List<T> list = gson.fromJson(gson.toJson(value), listType);
-            return list != null ? list : defaultValue;
-        } catch (Exception e) {
-            return defaultValue;
-        }
-    }
+        if(value instanceof Map)
+            return (Map) value;
 
-    public <T, K> Map<T, K> getValueOrDefaultMap(
-            @NonNull Map<String, Object> map,
-            @NonNull String reference,
-            @Nullable Map<T, K> defaultValue
-    ) {
-        Object value = map.get(reference);
-        if (value == null) {
-            return defaultValue;
-        }
-
-        Type mapType = new TypeToken<Map<T, K>>(){}.getType();
-        try {
-            Map<T, K> mapObj = gson.fromJson(gson.toJson(value), mapType);
-            return mapObj != null ? mapObj : defaultValue;
-        } catch (Exception e) {
-            return defaultValue;
-        }
+        return defaultValue;
     }
 
     public abstract void validate(Context context) throws AwesomeNotificationsException;
