@@ -1336,19 +1336,10 @@ public class NotificationBuilder {
     }
 
     private void setCustomLayout(Context context, NotificationModel notificationModel, NotificationCompat.Builder builder) {
-        String largeIconReference = notificationModel.content.largeIcon;
-        if (!stringUtils.isNullOrEmpty(largeIconReference)) {
-            Bitmap largeIcon = bitmapUtils.getBitmapFromSource(
-                    context,
-                    largeIconReference,
-                    notificationModel.content.roundedLargeIcon);
             RemoteViews contentView = new RemoteViews(AwesomeNotifications.getPackageName(context), R.layout.custom_notification_layout);
-            contentView.setImageViewResource(R.id.image, largeIcon.getGenerationId());
+            contentView.setImageViewResource(R.id.image, R.mipmap.ic_launcher);
             contentView.setTextViewText(R.id.title, notificationModel.content.title);
             builder.setContent(contentView);
-        } else {
-            return;
-        }
 
     }
 
