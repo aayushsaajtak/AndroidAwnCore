@@ -2,6 +2,8 @@ package me.carda.awesome_notifications.core.builders;
 
 import static android.app.NotificationManager.Policy.PRIORITY_CATEGORY_ALARMS;
 
+import static me.carda.awesome_notifications.core.AwesomeNotifications.getPackageName;
+
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -20,6 +22,7 @@ import android.os.PowerManager;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.Spanned;
+import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -43,6 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import me.carda.awesome_notifications.core.AwesomeNotifications;
 import me.carda.awesome_notifications.core.Definitions;
+import me.carda.awesome_notifications.core.R;
 import me.carda.awesome_notifications.core.completion_handlers.NotificationThreadCompletionHandler;
 import me.carda.awesome_notifications.core.enumerators.ActionType;
 import me.carda.awesome_notifications.core.enumerators.GroupSort;
@@ -378,7 +382,7 @@ public class NotificationBuilder {
             updateMainTargetClassName(applicationContext);
 
         if(mainTargetClassName == null)
-            mainTargetClassName = AwesomeNotifications.getPackageName(applicationContext) + ".MainActivity";
+            mainTargetClassName = getPackageName(applicationContext) + ".MainActivity";
 
         Class clazz = tryResolveClassName(mainTargetClassName);
         if(clazz != null) return clazz;
@@ -388,7 +392,7 @@ public class NotificationBuilder {
 
     public NotificationBuilder updateMainTargetClassName(Context applicationContext) {
 
-        String packageName = AwesomeNotifications.getPackageName(applicationContext);
+        String packageName = getPackageName(applicationContext);
         Intent intent = new Intent();
         intent.setPackage(packageName);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -410,7 +414,7 @@ public class NotificationBuilder {
     }
 
     public Intent getLaunchIntent(Context applicationContext){
-        String packageName = AwesomeNotifications.getPackageName(applicationContext);
+        String packageName = getPackageName(applicationContext);
         return applicationContext.getPackageManager().getLaunchIntentForPackage(packageName);
     }
 
@@ -873,7 +877,7 @@ public class NotificationBuilder {
     }
 
     private void setTitle(NotificationModel notificationModel, NotificationCompat.Builder builder) {
-        if (notificationModel.content.title == null) return;
+        if (notificationModel.content.title == null || notificationModel.content.notificationLayout == NotificationLayout.Custom) return;
         builder.setContentTitle(HtmlUtils.fromHtml(notificationModel.content.title));
     }
 
@@ -928,7 +932,7 @@ public class NotificationBuilder {
     }
 
     private void setLargeIcon(Context context, NotificationModel notificationModel, NotificationCompat.Builder builder) {
-        if (notificationModel.content.notificationLayout == NotificationLayout.BigPicture) return;
+        if (notificationModel.content.notificationLayout == NotificationLayout.BigPicture || notificationModel.content.notificationLayout == NotificationLayout.Custom) return;
 
         String largeIconReference = notificationModel.content.largeIcon;
         if (!stringUtils.isNullOrEmpty(largeIconReference)) {
@@ -1094,7 +1098,7 @@ public class NotificationBuilder {
                         int defaultResource = context.getResources().getIdentifier(
                             "ic_launcher",
                             "mipmap",
-                            AwesomeNotifications.getPackageName(context)
+                            getPackageName(context)
                         );
 
                         if (defaultResource > 0) {
@@ -1173,6 +1177,10 @@ public class NotificationBuilder {
 
             case ProgressBar:
                 setProgressLayout(notificationModel, builder);
+                break;
+
+            case Custom:
+                setCustomLayout(context,notificationModel, builder);
                 break;
 
             case Default:
@@ -1458,6 +1466,23 @@ public class NotificationBuilder {
                 Math.max(0, Math.min(100, IntegerUtils.extractInteger(notificationModel.content.progress, 0))),
                 notificationModel.content.progress == null
         );
+    }
+
+    private void setCustomLayout(Context context, NotificationModel notificationModel, NotificationCompat.Builder builder) {
+        String largeIconReference = notificationModel.content.largeIcon;
+        if (!stringUtils.isNullOrEmpty(largeIconReference)) {
+            Bitmap largeIcon = bitmapUtils.getBitmapFromSource(
+                    context,
+                    largeIconReference,
+                    notificationModel.content.roundedLargeIcon);
+            RemoteViews contentView = new RemoteViews(AwesomeNotifications.getPackageName(context), R.layout.custom_notification_layout);
+            contentView.setImageViewResource(R.id.image, largeIcon.getGenerationId());
+            contentView.setTextViewText(R.id.title, notificationModel.content.title);
+            builder.setContent(contentView);
+        } else {
+            return;
+        }
+
     }
 
     private int[] toIntArray(ArrayList<Integer> list) {
