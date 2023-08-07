@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.text.Html;
 import android.text.Spanned;
 import android.widget.RemoteViews;
 
@@ -1338,7 +1339,7 @@ public class NotificationBuilder {
     private void setCustomLayout(Context context, NotificationModel notificationModel, NotificationCompat.Builder builder) {
             RemoteViews contentView = new RemoteViews(AwesomeNotifications.getPackageName(context), R.layout.custom_notification_layout);
             contentView.setImageViewResource(R.id.image, R.drawable.ic_stat_name);
-            contentView.setTextViewText(R.id.title, notificationModel.content.title);
+            contentView.setTextViewText(R.id.title, Html.fromHtml(notificationModel.content.title));
             builder.setCustomContentView(contentView);
 //            builder.setContent(contentView);
 
