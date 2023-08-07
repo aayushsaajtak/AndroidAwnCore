@@ -26,12 +26,15 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="2dp"
-        android:layout_marginStart="2dp"
         android:layout_toEndOf="@id/image"
         android:accessibilityLiveRegion="none"
-        tools:text="as cds vfs vasdc ascjkba ashbxahbc ahbsx ashbxakj   asjbh asckbaj askcjb"
+        android:maxLines="2"
+        android:textAlignment="textStart"
         android:textColor="#000"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="as cds vfs vasdc ascjkba ashbxahbc ahbsx ashbxakj   asjbh asckbaj askcjb" />
 </RelativeLayout>
