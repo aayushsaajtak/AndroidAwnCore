@@ -36,8 +36,8 @@
         android:layout_toEndOf="@id/image"
         android:accessibilityLiveRegion="none"
         android:maxLines="2"
+        style="@style/TextAppearance.Compat.Notification.Info"
         android:textAlignment="textStart"
-        android:textColor="#000"
         android:textSize="16sp"
         android:textStyle="bold"
         tools:text="as cds vfs vasdc ascjkba ashbxahbc ahbsx ashbxakj   asjbh asckbaj askcjb" />
